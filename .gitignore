@@ -1,2 +1,7 @@
 node_modules/
 .env
+public/images/profiles/*
+!public/images/profiles/.gitkeep
+public/uploads/*
+!public/uploads/.gitkeep
+
