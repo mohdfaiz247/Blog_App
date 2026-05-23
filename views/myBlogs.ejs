@@ -1,0 +1,50 @@
+<%- include('./partials/head') %>
+<%- include('./partials/nav') %>
+
+<section class="hero container">
+  <h1>My <span class="grad">Stories</span></h1>
+  <p>Manage the blogs you have published on Blogify.</p>
+</section>
+
+<main class="container">
+  <div class="grid fade-in-stagger">
+    <% blogs.forEach(blog => { %>
+      <div class="card">
+        <a href="/blog/<%= blog._id %>" style="text-decoration:none; color:inherit; display:block;">
+          <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" class="card-img" loading="lazy" />
+          <div class="card-body">
+            <h3 class="card-title"><%= blog.title %></h3>
+            <div class="card-foot" style="border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+              <div class="author">
+                <div style="min-width:0;">
+                  <div class="author-date">Published on <%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px; align-items: center;">
+                <span style="font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;" title="Views">
+                  👁️ <%= blog.views || 0 %>
+                </span>
+                <span style="font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                  <span style="color: #ff4757;">❤️</span> <%= blog.likes ? blog.likes.length : 0 %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+        <div style="padding: 0 16px 16px; display: flex; gap: 8px;">
+          <a href="/blog/edit/<%= blog._id %>" class="btn btn-sm" style="flex:1; text-align:center;">✎ Edit</a>
+          <form action="/blog/delete/<%= blog._id %>" method="POST" onsubmit="return confirm('Delete this blog and all its comments?');" style="flex:1; display:flex;">
+            <button type="submit" class="btn btn-sm btn-danger" style="width:100%;">🗑 Delete</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <% if (!blogs || blogs.length === 0) { %>
+    <div class="muted-box" style="margin: 40px 0 80px;">
+      You haven't published any blogs yet. <a href="/blog/add-new">Write your first one →</a>
+    </div>
+  <% } %>
+</main>
+
+<%- include('./partials/scripts') %>

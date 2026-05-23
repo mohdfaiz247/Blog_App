@@ -1,0 +1,109 @@
+<%- include('./partials/head') %>
+<%- include('./partials/nav') %>
+
+<article class="container-sm fade-in">
+  <header class="blog-hero">
+    <img src="<%= blog.coverImageURL %>" alt="<%= blog.title %>" class="blog-cover" />
+    <h1 class="blog-title"><%= blog.title %></h1>
+    <div class="blog-meta">
+      <div class="author">
+        <img src="<%= blog.createdBy.profileImageURL || '/images/default.svg' %>" alt="" class="avatar avatar-lg" />
+        <div>
+          <div style="font-weight:600;"><%= blog.createdBy.fullName %></div>
+          <div style="font-size:13px;color:var(--text-muted); display:flex; gap: 10px; align-items: center;">
+            <span>Published <%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+            <span>•</span>
+            <span title="Views">👁️ <%= blog.views || 0 %></span>
+          </div>
+        </div>
+      </div>
+      <% if (locals.user && String(user._id) === String(blog.createdBy._id)) { %>
+        <div class="blog-actions">
+          <a href="/blog/edit/<%= blog._id %>" class="btn btn-sm">✎ Edit</a>
+          <form action="/blog/delete/<%= blog._id %>" method="POST" onsubmit="return confirm('Delete this blog and all its comments?');" style="display:inline;">
+            <button type="submit" class="btn btn-sm btn-danger">🗑 Delete</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </header>
+
+  <div class="prose"><%- contentHTML %></div>
+
+  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+    <span style="font-size: 16px; font-weight: 500; color: var(--text);">Do you like this story?</span>
+    <button type="button" onclick="handleLike(this, '<%= blog._id %>')" style="background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--text); transition: all 0.2s;">
+      <% if (locals.user && blog.likes && blog.likes.includes(user._id)) { %>
+        <span class="like-icon" style="color: #ff4757; font-size: 20px;">❤️</span>
+      <% } else { %>
+        <span class="like-icon" style="filter: grayscale(100%); opacity: 0.7; font-size: 20px;">❤️</span>
+      <% } %>
+      <span class="like-count"><%= blog.likes ? blog.likes.length : 0 %></span> Likes
+    </button>
+  </div>
+</article>
+
+<section class="container-sm comments">
+  <h2 class="comments-title">
+    Comments <span class="count"><%= comments.length %></span>
+  </h2>
+
+  <% if (locals.user) { %>
+    <form class="comment-form" action="/blog/comments/<%= blog._id %>" method="POST">
+      <img src="<%= user.profileImageURL || '/images/default.svg' %>" alt="" class="avatar" />
+      <div class="comment-form-body">
+        <textarea class="textarea" name="content" placeholder="Share your thoughts..." required></textarea>
+        <div class="comment-form-actions">
+          <button type="submit" class="btn btn-primary">Post comment</button>
+        </div>
+      </div>
+    </form>
+  <% } else { %>
+    <div class="muted-box">
+      <a href="/user/signin">Sign in</a> to join the conversation.
+    </div>
+  <% } %>
+
+  <% comments.forEach(comment => { %>
+    <div class="comment">
+      <img src="<%= comment.createdBy.profileImageURL || '/images/default.svg' %>" alt="" class="avatar" />
+      <div class="comment-body">
+        <div class="comment-head">
+          <div class="comment-meta">
+            <span class="name"><%= comment.createdBy.fullName %></span>
+            <span class="date"><%= new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+          </div>
+          <% if (locals.user) { %>
+            <div class="comment-actions">
+              <% if (String(user._id) === String(comment.createdBy._id)) { %>
+                <button type="button" class="btn btn-sm" data-edit-toggle="<%= comment._id %>">Edit</button>
+              <% } %>
+              <% if (String(user._id) === String(comment.createdBy._id) || String(user._id) === String(blog.createdBy._id)) { %>
+                <form action="/blog/comments/delete/<%= comment._id %>" method="POST" onsubmit="return confirm('Delete this comment?');" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+        <p class="comment-content"><%= comment.content %></p>
+
+        <% if (locals.user && String(user._id) === String(comment.createdBy._id)) { %>
+          <form id="edit-form-<%= comment._id %>" class="comment-edit" action="/blog/comments/edit/<%= comment._id %>" method="POST">
+            <textarea class="textarea" name="content" required><%= comment.content %></textarea>
+            <div class="comment-edit-actions">
+              <button type="button" class="btn btn-sm" data-edit-toggle="<%= comment._id %>">Cancel</button>
+              <button type="submit" class="btn btn-sm btn-primary">Save</button>
+            </div>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+
+  <% if (!comments || comments.length === 0) { %>
+    <div class="muted-box" style="margin-top:0;">Be the first to comment.</div>
+  <% } %>
+</section>
+
+<%- include('./partials/scripts') %>

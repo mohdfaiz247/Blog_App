@@ -1,0 +1,29 @@
+<%- include('./partials/head') %>
+<%- include('./partials/nav') %>
+
+<div class="auth-wrap">
+  <div class="auth-card fade-in">
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-sub">Sign in to continue your journey on Blogify.</p>
+
+    <% if (locals.error) { %>
+      <div class="alert"><%= error %></div>
+    <% } %>
+
+    <form action="/user/signin" method="POST">
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <input class="input" type="email" id="email" name="email" placeholder="you@domain.com" required />
+      </div>
+      <div class="field">
+        <label class="label" for="password">Password</label>
+        <input class="input" type="password" id="password" name="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+    </form>
+
+    <p class="auth-foot">No account yet? <a href="/user/signup">Create one</a></p>
+  </div>
+</div>
+
+<%- include('./partials/scripts') %>

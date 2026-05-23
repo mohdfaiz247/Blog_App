@@ -1,0 +1,43 @@
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="brand">
+      <span class="brand-mark">B</span>
+      <span>Blogify</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <% if (locals.user) { %>
+        <a href="/blog/add-new" class="nav-link">Add Blog</a>
+        <button id="theme-toggle" class="nav-link" title="Toggle theme" style="border:0;cursor:pointer;">◐</button>
+        <div class="dropdown">
+          <img
+            src="<%= user.profileImageURL || '/images/default.svg' %>"
+            alt="<%= user.fullName %>"
+            class="avatar"
+            data-dropdown-trigger
+          />
+          <div class="dropdown-menu">
+            <div style="padding:10px 12px;">
+              <div style="font-weight:600;font-size:14px;"><%= user.fullName %></div>
+              <div style="font-size:12px;color:var(--text-muted);"><%= user.email %></div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a href="/blog/my-blogs" class="dropdown-item">📝 My Blogs</a>
+            <form action="/user/update-profile-image" method="POST" enctype="multipart/form-data" style="padding:6px;">
+              <label class="dropdown-item" style="cursor:pointer;">
+                <span>📷</span><span>Update Profile Picture</span>
+                <input type="file" name="profileImage" accept="image/*" style="display:none;" onchange="this.form.submit()" />
+              </label>
+            </form>
+            <div class="dropdown-divider"></div>
+            <a href="/user/logout" class="dropdown-item">↩ Logout</a>
+          </div>
+        </div>
+      <% } else { %>
+        <button id="theme-toggle" class="nav-link" title="Toggle theme" style="border:0;cursor:pointer;">◐</button>
+        <a href="/user/signin" class="nav-link">Sign In</a>
+        <a href="/user/signup" class="btn btn-primary btn-sm">Create Account</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

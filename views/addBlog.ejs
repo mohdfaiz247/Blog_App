@@ -1,0 +1,28 @@
+<%- include('./partials/head') %>
+<%- include('./partials/nav') %>
+
+<main class="container-sm page fade-in">
+  <h1 class="page-title">Write a new story</h1>
+  <p class="page-sub">Share something the world hasn't read yet.</p>
+
+  <form action="/blog" method="POST" enctype="multipart/form-data">
+    <div class="field">
+      <label class="label" for="coverImage">Cover image</label>
+      <input class="file-input" type="file" id="coverImage" name="coverImage" accept="image/*" required />
+    </div>
+    <div class="field">
+      <label class="label" for="title">Title</label>
+      <input class="input" type="text" id="title" name="title" placeholder="An irresistible headline" required />
+    </div>
+    <div class="field">
+      <label class="label" for="body">Content</label>
+      <textarea class="textarea" id="body" name="body" placeholder="Write your story in Markdown..." required></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <a href="/" class="btn">Cancel</a>
+      <button type="submit" class="btn btn-primary">Publish</button>
+    </div>
+  </form>
+</main>
+
+<%- include('./partials/scripts') %>

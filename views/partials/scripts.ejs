@@ -1,0 +1,63 @@
+<script>
+  // Dropdown
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-dropdown-trigger]');
+    const allDropdowns = document.querySelectorAll('.dropdown');
+    if (trigger) {
+      const dd = trigger.closest('.dropdown');
+      allDropdowns.forEach(d => { if (d !== dd) d.classList.remove('open'); });
+      dd.classList.toggle('open');
+    } else if (!e.target.closest('.dropdown-menu')) {
+      allDropdowns.forEach(d => d.classList.remove('open'));
+    }
+  });
+
+  // Theme toggle
+  const themeBtn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem('blogify-theme');
+  if (savedTheme) root.setAttribute('data-theme', savedTheme);
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('blogify-theme', next);
+    });
+  }
+
+  // Comment edit toggle
+  document.querySelectorAll('[data-edit-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-edit-toggle');
+      document.getElementById('edit-form-' + id)?.classList.toggle('active');
+    });
+  });
+
+  // Like Blog via AJAX
+  async function handleLike(btn, blogId) {
+    try {
+      const res = await fetch(`/blog/like/${blogId}`, { method: 'POST' });
+      if (res.status === 401) {
+        window.location.href = '/user/signin';
+        return;
+      }
+      const data = await res.json();
+      if (data.success) {
+        const iconSpan = btn.querySelector('.like-icon');
+        const countSpan = btn.querySelector('.like-count');
+        countSpan.textContent = data.likesCount;
+        if (data.liked) {
+          iconSpan.style.filter = 'none';
+          iconSpan.style.opacity = '1';
+        } else {
+          iconSpan.style.filter = 'grayscale(100%)';
+          iconSpan.style.opacity = '0.7';
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<%- include('./partials/head') %>
+<%- include('./partials/nav') %>
+
+<main class="container-sm page fade-in">
+  <h1 class="page-title">Edit story</h1>
+  <p class="page-sub">Polish your words. The cover stays unless you upload a new one.</p>
+
+  <form action="/blog/edit/<%= blog._id %>" method="POST" enctype="multipart/form-data">
+    <% if (blog.coverImageURL) { %>
+      <div class="field">
+        <label class="label">Current cover</label>
+        <img src="<%= blog.coverImageURL %>" alt="" style="width:100%;border-radius:14px;border:1px solid var(--border);" />
+      </div>
+    <% } %>
+    <div class="field">
+      <label class="label" for="coverImage">Replace cover (optional)</label>
+      <input class="file-input" type="file" id="coverImage" name="coverImage" accept="image/*" />
+    </div>
+    <div class="field">
+      <label class="label" for="title">Title</label>
+      <input class="input" type="text" id="title" name="title" value="<%= blog.title %>" required />
+    </div>
+    <div class="field">
+      <label class="label" for="body">Content</label>
+      <textarea class="textarea" id="body" name="body" required><%= blog.body %></textarea>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <a href="/blog/<%= blog._id %>" class="btn">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+</main>
+
+<%- include('./partials/scripts') %>
